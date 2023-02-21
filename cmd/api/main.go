@@ -10,6 +10,7 @@ import (
 
 	// undescore (alias) is used to avoid go compiler complaining or erasing this
 	// library.
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/shynggys9219/greenlight/internal/data"
 	"github.com/shynggys9219/greenlight/internal/jsonlog"
@@ -51,6 +52,7 @@ type application struct {
 }
 
 func main() {
+
 	var cfg config
 	flag.IntVar(&cfg.port, "port", 7000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
@@ -72,6 +74,7 @@ func main() {
 	flag.StringVar(&cfg.smtp.password, "smtp-password", "Aitu2021!", "SMTP password")
 	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "211484@astanait.edu.kz", "SMTP sender")
 	flag.Parse()
+
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 	db, err := openDB(cfg)
 	if err != nil {
@@ -91,6 +94,13 @@ func main() {
 	if err != nil {
 		logger.PrintFatal(err, nil)
 	}
+	r := gin.Default()
+
+	r.GET("", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Hello from zeet, The project was deployed",
+		})
+	})
 }
 
 func openDB(cfg config) (*sql.DB, error) {
